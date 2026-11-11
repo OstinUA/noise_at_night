@@ -4,29 +4,74 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Генератор фонових звуків для сну та релаксації. Звуки природи, таймер, налаштування гучності.">
+    <meta name="referrer" content="no-referrer">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#1a1a1a">
     <title>Звуки для сну</title>
     <link rel="icon" href="https://i.imgur.com/e1JIdxx.png" type="image/png">
     <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
 </head>
 <body>
-    <div class="overlay"></div>
+    <div class="overlay" aria-hidden="true"></div>
+
     <div class="container">
-        <header class="timer-section">
-            <div class="timer-display" id="timerDisplay" aria-label="Час до вимкнення">00:00</div>
-            <div class="timer-controls">
-                <div class="input-wrapper">
-                    <input type="number" id="minutesInput" placeholder="Хв" min="1" max="999" value="50" aria-label="Введіть хвилини">
-                    <span class="input-suffix">хв</span>
-                </div>
-                <button onclick="startTimer()" class="btn-control">Старт</button>
-                <button onclick="pauseTimer()" class="btn-control">Пауза</button>
-                <button onclick="resetTimer()" class="btn-control">Стоп</button>
-            </div>
+        <header class="timer-section" aria-labelledby="timerHeading">
+            <h1 class="visually-hidden" data-i18n="appTitle">Звуки для сну</h1>
+            <h2 class="section-label" id="timerHeading" data-i18n="timerHeading">Таймер сну</h2>
+
+            <div class="timer-display" id="timerDisplay" role="timer" aria-live="off" data-i18n-aria-label="timerDisplayLabel" aria-label="Час до вимкнення">00:00</div>
+
+            <form class="timer-controls" id="timerForm" novalidate>
+                <label class="input-wrapper">
+                    <input type="number" id="minutesInput" inputmode="numeric" min="1" max="999" step="1" value="50" data-i18n-aria-label="minutesLabel" aria-label="Тривалість таймера у хвилинах">
+                    <span class="input-suffix" data-i18n="minutesSuffix" aria-hidden="true">хв</span>
+                </label>
+                <button type="submit" class="btn-control" id="timerStart" data-i18n="timerStart">Старт</button>
+                <button type="button" class="btn-control" id="timerPause" data-i18n="timerPause">Пауза</button>
+                <button type="button" class="btn-control" id="timerReset" data-i18n="timerReset">Стоп</button>
+            </form>
+
+            <div class="chip-row" id="timerPresets" role="group" data-i18n-aria-label="timerPresetsLabel" aria-label="Швидкий вибір тривалості"></div>
         </header>
 
-        <main class="sounds-grid" id="soundsGrid"></main>
+        <section class="mixer-section" aria-labelledby="mixerHeading">
+            <h2 class="section-label" id="mixerHeading" data-i18n="mixerHeading">Мікс</h2>
+
+            <div class="mixer-controls">
+                <button type="button" class="btn-control btn-primary" id="playbackToggle" data-i18n="play">Відтворити</button>
+                <button type="button" class="btn-control" id="muteToggle" aria-pressed="false" data-i18n="mute">Без звуку</button>
+                <label class="master-volume">
+                    <span class="master-volume-label" data-i18n="masterVolume">Загальна гучність</span>
+                    <input type="range" class="volume-slider" id="masterVolume" min="0" max="100" step="1" value="100">
+                </label>
+                <button type="button" class="btn-control" id="shuffleMix" data-i18n="shuffle">Випадковий мікс</button>
+                <button type="button" class="btn-control" id="clearMix" data-i18n="clear">Вимкнути все</button>
+            </div>
+
+            <div class="chip-row" id="mixList" role="group" data-i18n-aria-label="mixListLabel" aria-label="Готові та збережені мікси"></div>
+
+            <form class="save-mix-form" id="saveMixForm" hidden novalidate>
+                <label class="input-wrapper input-wrapper-wide">
+                    <input type="text" id="mixNameInput" maxlength="24" autocomplete="off" data-i18n-placeholder="mixNamePlaceholder" data-i18n-aria-label="mixNamePlaceholder" placeholder="Назва мікса" aria-label="Назва мікса">
+                </label>
+                <button type="submit" class="btn-control" data-i18n="save">Зберегти</button>
+                <button type="button" class="btn-control" id="saveMixCancel" data-i18n="cancel">Скасувати</button>
+            </form>
+        </section>
+
+        <main class="sounds-grid" id="soundsGrid" data-i18n-aria-label="soundsLabel" aria-label="Звуки"></main>
+
+        <footer class="app-footer">
+            <p class="shortcuts-hint" data-i18n="shortcutsHint">Пробіл — відтворення / пауза · M — без звуку · 1–0 — увімкнути звук</p>
+            <button type="button" class="btn-link" id="languageToggle"></button>
+        </footer>
+
+        <p class="visually-hidden" id="statusRegion" role="status" aria-live="polite"></p>
     </div>
 
-    <script src="script.js"></script>
+    <noscript>
+        <p class="noscript-message">Для роботи застосунку потрібен JavaScript. / JavaScript is required to run this app.</p>
+    </noscript>
 </body>
 </html>
